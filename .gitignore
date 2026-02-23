@@ -1,0 +1,30 @@
+# 민감 정보 / 개인 데이터
+stock_agent_data/config.json
+stock_agent_data/users.json
+stock_agent_data/watchlist.json
+stock_agent_data/scheduler.log
+
+# 생성된 리포트 (대용량)
+stock_agent_data/reports/
+
+# 실행 파일
+ngrok.exe
+
+# Python 캐시
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 가상환경
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

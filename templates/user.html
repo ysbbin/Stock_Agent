@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📈 주식 리서치 — 구독 신청</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Malgun Gothic', -apple-system, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh; padding: 20px;
+    }
+    .container { max-width: 720px; margin: 0 auto; }
+    .header {
+      background: rgba(255,255,255,0.95);
+      padding: 28px 32px; border-radius: 16px;
+      margin-bottom: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      text-align: center;
+    }
+    .header h1 { font-size: 26px; color: #1a73e8; margin-bottom: 8px; }
+    .header p  { color: #666; font-size: 14px; line-height: 1.6; }
+    .card {
+      background: rgba(255,255,255,0.95);
+      padding: 24px; border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1); margin-bottom: 20px;
+    }
+    .card h2 {
+      font-size: 17px; color: #1a73e8;
+      margin-bottom: 16px; padding-bottom: 12px;
+      border-bottom: 2px solid #e8f0fe;
+    }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; color: #333; margin-bottom: 6px; }
+    .form-group input, .form-group select {
+      width: 100%; padding: 11px 14px;
+      border: 1.5px solid #ddd; border-radius: 8px;
+      font-size: 14px; transition: border .2s; background: #fff;
+    }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: #1a73e8; }
+    .alert {
+      padding: 14px 18px; border-radius: 10px;
+      margin-bottom: 16px; font-size: 14px; display: none;
+      font-weight: 600; text-align: center;
+    }
+    .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .alert-error   { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #e8f0fe; color: #1a73e8;
+      padding: 5px 10px; border-radius: 14px;
+      font-size: 13px; margin: 3px; font-weight: 600;
+    }
+    .chip.ind { background: #e6f4ea; color: #2d8e47; }
+    .chip .remove { cursor: pointer; font-weight: bold; font-size: 15px; line-height: 1; }
+    .category { margin-bottom: 6px; }
+    .category-btn {
+      width: 100%; text-align: left; padding: 9px 14px;
+      background: #f8f9fa; border: 1.5px solid #e0e0e0;
+      border-radius: 8px; font-size: 13px; font-weight: 600;
+      cursor: pointer; color: #444; transition: all .2s;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .category-btn:hover { background: #e8f0fe; border-color: #1a73e8; color: #1a73e8; }
+    .category-btn.open  { background: #e8f0fe; border-color: #1a73e8; color: #1a73e8; border-radius: 8px 8px 0 0; }
+    .category-content {
+      display: none; flex-wrap: wrap; gap: 5px;
+      padding: 10px; border: 1.5px solid #1a73e8;
+      border-top: none; border-radius: 0 0 8px 8px; background: #fff;
+    }
+    .category-content.open { display: flex; }
+    .preset-chip {
+      display: inline-block; padding: 5px 11px;
+      border-radius: 14px; font-size: 12px; cursor: pointer;
+      border: 1.5px solid #ddd; background: #fff; color: #555;
+      transition: all .15s; user-select: none; font-weight: 500;
+    }
+    .preset-chip:hover { border-color: #1a73e8; color: #1a73e8; background: #f0f5ff; }
+    .preset-chip.selected     { background: #1a73e8; color: #fff; border-color: #1a73e8; }
+    .preset-chip.ind-selected { background: #34a853; color: #fff; border-color: #34a853; }
+    .section-label { font-size: 12px; color: #888; margin: 10px 0 6px; font-weight: 600; }
+    .input-row { display: flex; gap: 8px; margin-top: 10px; }
+    .input-row input { flex: 1; padding: 9px 12px; border: 1.5px solid #ddd; border-radius: 8px; font-size: 13px; }
+    .input-row input:focus { outline: none; border-color: #1a73e8; }
+    .name-row { display: flex; gap: 8px; }
+    .name-row input { flex: 1; }
+    .btn-load {
+      padding: 11px 16px; background: #f0f4ff; color: #1a73e8;
+      border: 1.5px solid #1a73e8; border-radius: 8px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      white-space: nowrap; transition: all .2s;
+    }
+    .btn-load:hover { background: #1a73e8; color: #fff; }
+    .time-row { display: flex; gap: 12px; }
+    .time-row .form-group { flex: 1; margin-bottom: 0; }
+    .time-row select { padding: 11px 10px; }
+    .btn-submit {
+      width: 100%; padding: 14px; background: #1a73e8; color: #fff;
+      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
+      cursor: pointer; transition: all .2s;
+    }
+    .btn-submit:hover { background: #1557b0; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(26,115,232,0.35); }
+    .btn-send {
+      width: 100%; padding: 14px; background: #34a853; color: #fff;
+      border: none; border-radius: 10px; font-size: 15px; font-weight: 700;
+      cursor: pointer; transition: all .2s; margin-top: 10px;
+    }
+    .btn-send:hover { background: #2d8e47; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(52,168,83,0.35); }
+    .btn-send:disabled { background: #aaa; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-sm { padding: 7px 14px; font-size: 13px; background: #34a853; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; white-space: nowrap; }
+    .btn-sm:hover { background: #2d8e47; }
+    .notice {
+      background: #fff8e1; border-left: 4px solid #f9a825;
+      padding: 12px 16px; border-radius: 6px;
+      font-size: 13px; color: #555; line-height: 1.7;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>📈 주식 리서치 구독 신청</h1>
+    <p>관심 종목과 산업을 선택하면<br>매일 AI가 분석한 리서치 리포트를 이메일로 보내드립니다.</p>
+  </div>
+
+  <div id="alert" class="alert"></div>
+
+  <!-- 기본 정보 -->
+  <div class="card">
+    <h2>👤 기본 정보</h2>
+    <div class="form-group">
+      <label>이름 (구독자 식별용 — 동명이인 불가)</label>
+      <div class="name-row">
+        <input type="text" id="user_name" placeholder="홍길동" oninput="onNameInput()">
+        <button class="btn-load" onclick="loadByName()">📂 불러오기</button>
+      </div>
+      <div id="name-status" style="font-size:12px;color:#888;margin-top:5px"></div>
+    </div>
+    <div class="form-group">
+      <label>이메일 (리포트 수신 주소)</label>
+      <input type="email" id="user_email" placeholder="yourname@gmail.com">
+    </div>
+    <div class="notice">
+      💡 이름으로 이전 설정을 불러올 수 있습니다. 이름이 같으면 기존 설정이 업데이트됩니다.
+    </div>
+  </div>
+
+  <!-- 관심 종목 -->
+  <div class="card">
+    <h2>📌 관심 종목</h2>
+    <div class="section-label">선택된 종목</div>
+    <div id="stocks-chips" style="min-height:28px"></div>
+    <div class="section-label" style="margin-top:14px">인기 종목에서 선택</div>
+    <div id="stock-categories"></div>
+    <div class="section-label">직접 입력</div>
+    <div class="input-row">
+      <input type="text" id="new_stock" placeholder="종목명 입력 (예: NVIDIA)">
+      <button class="btn-sm" onclick="addDirect('stock')">➕ 추가</button>
+    </div>
+  </div>
+
+  <!-- 관심 산업 -->
+  <div class="card">
+    <h2>🏭 관심 산업</h2>
+    <div class="section-label">선택된 산업</div>
+    <div id="industries-chips" style="min-height:28px"></div>
+    <div class="section-label" style="margin-top:14px">산업 분야에서 선택</div>
+    <div id="industry-categories"></div>
+    <div class="section-label">직접 입력</div>
+    <div class="input-row">
+      <input type="text" id="new_industry" placeholder="산업명 입력 (예: 양자컴퓨팅)">
+      <button class="btn-sm" onclick="addDirect('industry')">➕ 추가</button>
+    </div>
+  </div>
+
+  <!-- 수신 시간 -->
+  <div class="card">
+    <h2>⏰ 리포트 수신 시간</h2>
+    <div class="time-row">
+      <div class="form-group">
+        <label>시 (0~23)</label>
+        <select id="schedule_hour"></select>
+      </div>
+      <div class="form-group">
+        <label>분</label>
+        <select id="schedule_minute">
+          <option value="0">00분</option>
+          <option value="10">10분</option>
+          <option value="20">20분</option>
+          <option value="30">30분</option>
+          <option value="40">40분</option>
+          <option value="50">50분</option>
+        </select>
+      </div>
+    </div>
+    <p style="font-size:12px;color:#999;margin-top:8px">※ 실제 발송 시간은 관리자가 설정한 시간 기준입니다.</p>
+  </div>
+
+  <!-- 버튼 -->
+  <div class="card">
+    <button class="btn-submit" onclick="submitForm()">💾 구독 신청 / 설정 변경</button>
+    <button class="btn-send" id="btn-send-now" onclick="sendNow()">⚡ 지금 바로 리포트 받기</button>
+  </div>
+
+</div>
+<script>
+  let stocks = [];
+  let industries = [];
+
+  const STOCK_PRESETS = {
+    '🇰🇷 한국 대형주':  ['삼성전자','SK하이닉스','LG에너지솔루션','현대차','기아','삼성바이오로직스','셀트리온','NAVER','카카오','POSCO홀딩스','LG화학','삼성SDI','KB금융','신한지주'],
+    '🇰🇷 한국 테마주':  ['에코프로','에코프로비엠','포스코퓨처엠','한화에어로스페이스','두산에너빌리티','HD현대일렉트릭','레인보우로보틱스','한미반도체'],
+    '🇺🇸 미국 빅테크':  ['Apple','Microsoft','NVIDIA','Google','Amazon','Meta','Tesla','Netflix','Spotify','Airbnb'],
+    '🇺🇸 미국 반도체':  ['AMD','Intel','Qualcomm','TSMC','Broadcom','Micron','ARM','Marvell'],
+    '🇺🇸 소프트웨어·클라우드': ['Salesforce','Oracle','Adobe','Snowflake','Palantir','CrowdStrike','ServiceNow','Datadog'],
+    '🇺🇸 미국 금융':    ['JPMorgan','Goldman Sachs','Berkshire Hathaway','Morgan Stanley','Visa','Mastercard','Coinbase'],
+
+    '🌐 ETF · 지수':    ['S&P500','NASDAQ','QQQ','KOSPI','KOSDAQ','SPY','SCHD','ARK Innovation'],
+  };
+  const INDUSTRY_PRESETS = {
+    '💻 기술 · IT':       ['반도체','AI·인공지능','클라우드','소프트웨어','사이버보안','게임','양자컴퓨팅'],
+    '🤖 AI · 로봇':       ['AI 에이전트','휴머노이드 로봇','자율주행','드론','스마트팩토리'],
+    '⚡ 에너지':          ['전력','신재생에너지','원자력','석유·가스','수소','ESS'],
+    '🚗 제조 · 모빌리티': ['자동차','전기차','배터리','항공우주','방위산업'],
+    '🧬 바이오 · 헬스':   ['바이오','제약','의료기기','헬스케어','항암제'],
+    '🏦 금융':            ['은행','보험','핀테크','자산운용','암호화폐·블록체인'],
+    '🛒 소비재 · 유통':   ['이커머스','식품·음료','명품·패션','미디어·엔터','여행·숙박'],
+    '🏗️ 인프라 · 부동산': ['데이터센터','리츠(REITs)','건설·인프라','통신'],
+  };
+
+  // 시간 드롭다운 채우기
+  const hourSel = document.getElementById('schedule_hour');
+  for (let h = 0; h < 24; h++) {
+    const opt = document.createElement('option');
+    opt.value = h;
+    opt.textContent = `${String(h).padStart(2,'0')}시`;
+    if (h === 9) opt.selected = true;
+    hourSel.appendChild(opt);
+  }
+
+  // 이름 입력 시 상태 초기화
+  function onNameInput() {
+    document.getElementById('name-status').textContent = '';
+  }
+
+  // 이름으로 기존 설정 불러오기
+  async function loadByName() {
+    const name = document.getElementById('user_name').value.trim();
+    if (!name) { showAlert('이름을 먼저 입력해주세요.', 'error'); return; }
+    const res  = await fetch(`/api/user_by_name/${encodeURIComponent(name)}`);
+    const json = await res.json();
+    if (!json.success) {
+      document.getElementById('name-status').textContent = '✨ 새로운 구독자입니다.';
+      return;
+    }
+    const u = json.user;
+    document.getElementById('user_email').value = u.email || '';
+    document.getElementById('schedule_hour').value   = u.schedule_hour ?? 9;
+    document.getElementById('schedule_minute').value = u.schedule_minute ?? 0;
+    stocks     = u.stocks || [];
+    industries = u.industries || [];
+    renderAll();
+    document.getElementById('name-status').textContent = '✅ 이전 설정을 불러왔습니다.';
+    showAlert(`${name}님의 설정을 불러왔습니다.`, 'success');
+  }
+
+  function buildCategories(presets, containerId, type) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    Object.entries(presets).forEach(([cat, items], idx) => {
+      const id = `cat-${type}-${idx}`;
+      const selClass = type === 'stock' ? 'selected' : 'ind-selected';
+      const list = type === 'stock' ? stocks : industries;
+      const chips = items.map(item => {
+        const sel = list.includes(item) ? selClass : '';
+        return `<span class="preset-chip ${sel}" onclick="togglePreset('${item}','${type}')">${item}</span>`;
+      }).join('');
+      container.innerHTML += `
+        <div class="category">
+          <button class="category-btn" onclick="toggleCategory('${id}')">
+            <span>${cat}</span><span>▾</span>
+          </button>
+          <div class="category-content" id="${id}">${chips}</div>
+        </div>`;
+    });
+  }
+
+  function toggleCategory(id) {
+    const content = document.getElementById(id);
+    content.previousElementSibling.classList.toggle('open');
+    content.classList.toggle('open');
+  }
+
+  function togglePreset(name, type) {
+    const list = type === 'stock' ? stocks : industries;
+    if (list.includes(name)) {
+      if (type === 'stock') stocks = stocks.filter(s => s !== name);
+      else industries = industries.filter(i => i !== name);
+    } else { list.push(name); }
+    renderAll();
+  }
+
+  function removeItem(name, type) {
+    if (type === 'stock') stocks = stocks.filter(s => s !== name);
+    else industries = industries.filter(i => i !== name);
+    renderAll();
+  }
+
+  function addDirect(type) {
+    const inputId = type === 'stock' ? 'new_stock' : 'new_industry';
+    const input   = document.getElementById(inputId);
+    const val     = input.value.trim();
+    if (!val) return;
+    const list = type === 'stock' ? stocks : industries;
+    if (!list.includes(val)) { list.push(val); renderAll(); }
+    input.value = '';
+  }
+
+  function renderAll() {
+    document.getElementById('stocks-chips').innerHTML = stocks.map(s =>
+      `<span class="chip">${s} <span class="remove" onclick="removeItem('${s}','stock')">×</span></span>`
+    ).join('');
+    document.getElementById('industries-chips').innerHTML = industries.map(i =>
+      `<span class="chip ind">${i} <span class="remove" onclick="removeItem('${i}','industry')">×</span></span>`
+    ).join('');
+    buildCategories(STOCK_PRESETS, 'stock-categories', 'stock');
+    buildCategories(INDUSTRY_PRESETS, 'industry-categories', 'industry');
+  }
+
+  function showAlert(message, type) {
+    const el = document.getElementById('alert');
+    el.className = `alert alert-${type}`;
+    el.textContent = message;
+    el.style.display = 'block';
+    el.scrollIntoView({behavior: 'smooth', block: 'center'});
+    setTimeout(() => el.style.display = 'none', 6000);
+  }
+
+  function getFormData() {
+    return {
+      name:            document.getElementById('user_name').value.trim(),
+      email:           document.getElementById('user_email').value.trim(),
+      stocks,
+      industries,
+      schedule_hour:   parseInt(document.getElementById('schedule_hour').value),
+      schedule_minute: parseInt(document.getElementById('schedule_minute').value),
+    };
+  }
+
+  async function submitForm() {
+    const data = getFormData();
+    if (!data.name)  { showAlert('이름을 입력해주세요.', 'error'); return; }
+    if (!data.email) { showAlert('이메일을 입력해주세요.', 'error'); return; }
+    if (!data.stocks.length && !data.industries.length) {
+      showAlert('관심 종목 또는 산업을 1개 이상 선택해주세요.', 'error'); return;
+    }
+    const res  = await fetch('/api/register_user', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    });
+    const json = await res.json();
+    showAlert(json.message, json.success ? 'success' : 'error');
+  }
+
+  async function sendNow() {
+    const data = getFormData();
+    if (!data.name)  { showAlert('이름을 입력해주세요.', 'error'); return; }
+    if (!data.email) { showAlert('이메일을 입력해주세요.', 'error'); return; }
+    if (!data.stocks.length && !data.industries.length) {
+      showAlert('관심 종목 또는 산업을 1개 이상 선택해주세요.', 'error'); return;
+    }
+    // 먼저 저장
+    await fetch('/api/register_user', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    });
+    // 즉시 전송 요청
+    const btn = document.getElementById('btn-send-now');
+    btn.disabled = true;
+    btn.textContent = '⏳ 전송 중...';
+    const res  = await fetch('/api/send_now', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({name: data.name})
+    });
+    const json = await res.json();
+    showAlert(json.message, json.success ? 'success' : 'error');
+    setTimeout(() => { btn.disabled = false; btn.textContent = '⚡ 지금 바로 리포트 받기'; }, 180000);
+  }
+
+  document.getElementById('new_stock').addEventListener('keypress', e => { if (e.key === 'Enter') addDirect('stock'); });
+  document.getElementById('new_industry').addEventListener('keypress', e => { if (e.key === 'Enter') addDirect('industry'); });
+
+  buildCategories(STOCK_PRESETS, 'stock-categories', 'stock');
+  buildCategories(INDUSTRY_PRESETS, 'industry-categories', 'industry');
+</script>
+</body>
+</html>
